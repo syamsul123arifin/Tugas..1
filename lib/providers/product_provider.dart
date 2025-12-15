@@ -16,12 +16,18 @@ class ProductProvider with ChangeNotifier {
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token');
+      debugPrint('ProductProvider: Token retrieved: ${token != null ? 'present' : 'null'}');
       if (token == null) throw Exception('No token found');
+      debugPrint('ProductProvider: Fetching products...');
       final response = await ApiService().getProducts(token);
+      debugPrint('ProductProvider: Response received');
       final List<dynamic> productData = response['data'] ?? [];
+      debugPrint('ProductProvider: Product data length: ${productData.length}');
       _products = productData.map((json) => Product.fromJson(json)).toList();
+      debugPrint('ProductProvider: Products loaded: ${_products.length}');
       notifyListeners();
     } catch (e) {
+      debugPrint('ProductProvider: Error fetching products: $e');
       _products = [];
       notifyListeners();
       throw e;

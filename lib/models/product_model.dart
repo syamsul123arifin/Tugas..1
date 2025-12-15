@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 class Product {
   final int id;
   final String name;
@@ -17,10 +19,10 @@ class Product {
 
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
-      id: json['id'] as int,
+      id: int.tryParse(json['id'].toString()) ?? 0,
       name: json['name'] as String,
-      price: json['price'] as int,
-      stock: json['stock'] as int,
+      price: int.tryParse(json['price'].toString()) ?? 0,
+      stock: int.tryParse(json['stock'].toString()) ?? 0,
       barcode: json['barcode'] as String,
       imageUrl: json['image_url'] as String?,
     );
