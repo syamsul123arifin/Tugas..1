@@ -95,23 +95,77 @@ class _ProductScreenState extends State<ProductScreen> {
           if (productProvider.products.isEmpty) {
             return Center(child: Text('No products available'));
           }
-          return ListView.builder(
+          return GridView.builder(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 0.8,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+            ),
+            padding: EdgeInsets.all(10),
             itemCount: productProvider.products.length,
             itemBuilder: (context, index) {
               final product = productProvider.products[index];
               return Card(
-                child: ListTile(
-                  title: Text(product.name),
-                  subtitle: Text('Rp ${product.price} - Stock: ${product.stock}'),
-                  trailing: ElevatedButton(
-                    onPressed: () {
-                      Provider.of<CartProvider>(context, listen: false).addItem(product);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('${product.name} added to cart')),
-                      );
-                    },
-                    child: Text('Add to Cart'),
-                  ),
+                elevation: 4,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(
+                      child: product.imageUrl != null && product.imageUrl!.isNotEmpty
+                        ? Image.network(
+                            product.imageUrl!,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                color: Colors.grey[300],
+                                child: Icon(Icons.broken_image, size: 50),
+                              );
+                            },
+                          )
+                        : Container(
+                            color: Colors.grey[300],
+                            child: Icon(Icons.image, size: 50),
+                          ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            product.name,
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            'Rp ${product.price}',
+                            style: TextStyle(color: Colors.green, fontSize: 14),
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            'Stock: ${product.stock}',
+                            style: TextStyle(fontSize: 12, color: Colors.grey),
+                          ),
+                          SizedBox(height: 8),
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Provider.of<CartProvider>(context, listen: false).addItem(product);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('${product.name} added to cart')),
+                                );
+                              },
+                              child: Text('Add to Cart'),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               );
             },
